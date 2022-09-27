@@ -38,7 +38,8 @@ Resources:
       KeyName: !Ref KeyName
       SecurityGroupIds: 
         - !Ref DemoSecurityGroup
-      SubnetId: !Ref SubnetId      
+      SubnetId: !Ref SubnetId
+      IamInstanceProfile: !Ref DemoInstanceProfile   
       UserData:
         Fn::Base64: 
           !Sub |
@@ -59,7 +60,6 @@ Resources:
             chef --version
             hostname
             </powershell>
-
 
   DemoSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
@@ -90,6 +90,18 @@ Resources:
       Tags:
         - Key: Name
           Value: SSH-SG
+
+  DemoInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: demo-ec2-instance-profile
+      Path: /
+      Roles: 
+       - !Ref DemoEc2InstanceRole
+  DemoEc2InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: myfullaccessrole 
 
 Outputs:
   DemoInstanceId:
