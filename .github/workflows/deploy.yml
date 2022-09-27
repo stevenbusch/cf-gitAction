@@ -60,10 +60,13 @@ jobs:
   remote-chef:
    # needs: provision-ec2
     runs-on: windows-latest
+
     steps:
     - name: Check out code
       uses: actions/checkout@master
     - name: install chef
       uses: actionshub/chef-install@main
+      env:
+        CHEF_LICENSE: accept-no-persist
     - name: Run inspec test
       run: inspec exec .\test2.rb
