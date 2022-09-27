@@ -37,11 +37,11 @@ Resources:
       InstanceProfileName: demo-ec2-instance-profile
       Path: /
       Roles: 
-       - !Ref DemoEc2InstanceRole 
-  DemoEc2InstanceRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: myfullaccessrole   
+       - Ref: "myfullaccessrole" 
+#  DemoEc2InstanceRole:
+#    Type: AWS::IAM::Role
+#    Properties:
+#      RoleName: myfullaccessrole   
 
   DemoInstance:
     Type: 'AWS::EC2::Instance'
