@@ -18,7 +18,7 @@ Parameters:
   AvailabilityZone:
     Type: String
     Description: Availability Zone into which instance will launch
-    Default: ap-south-1a
+    Default: ap-south-1b
   InstanceType:
     Type: String
     Description: Choosing  t2 micro because it is free
