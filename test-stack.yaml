@@ -103,8 +103,7 @@ Resources:
       InstanceProfileName: demo-ec2-instance-profile
       Path: /
       Roles: 
-       - !Ref DemoEc2InstanceRole
-      required:  
+       - !Ref DemoEc2InstanceRole 
   DemoEc2InstanceRole:
     Type: AWS::IAM::Role
     Properties:
