@@ -18,11 +18,7 @@ on:
   push:
     branches:
       - main
-    inputs:
-      region:
-        description: 'AWS Region to deploy to'
-        required: true
-        default: 'ap-south-1'
+
 jobs:
   # This workflow contains a single job called "deploy"
   deploy:
@@ -40,8 +36,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
-          aws-region: ${{ github.event.inputs.region }}
-
+          aws-region: ${{ secrets.REGION }}
       # Deploy to AWS CloudFormation
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
