@@ -30,19 +30,6 @@ Parameters:
 
 
 Resources:
-
-  DemoInstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties: 
-      InstanceProfileName: demo-ec2-instance-profile
-      Path: /
-      Roles: 
-       - Ref: "myfullaccessrole" 
-#  DemoEc2InstanceRole:
-#    Type: AWS::IAM::Role
-#    Properties:
-#      RoleName: myfullaccessrole   
-
   DemoInstance:
     Type: 'AWS::EC2::Instance'
     Properties: 
@@ -104,6 +91,41 @@ Resources:
       Tags:
         - Key: Name
           Value: SSH-SG
+
+  DemoInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: newprofile
+      Path: /
+      Roles: 
+       - !Ref DemoEc2InstanceRole 
+
+  NewPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: newpolicyFullAccess
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: '*'
+            Resource: '*'
+      Roles:
+        - !Ref DemoEc2InstanceRole
+
+  DemoEc2InstanceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: NewRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /  
 
 Outputs:
   DemoInstanceId:
