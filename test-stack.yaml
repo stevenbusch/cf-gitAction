@@ -28,13 +28,21 @@ Parameters:
     Type: AWS::EC2::KeyPair::KeyName
     Default: MyEC2Instance
 
-inputs:
-  capabilities:
-    description: "capabilities to acknowledge. Defaults to 'CAPABILITY_IAM'"
-    required: true
-    default: "CAPABILITY_NAMED_IAM"
 
 Resources:
+
+  DemoInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: demo-ec2-instance-profile
+      Path: /
+      Roles: 
+       - !Ref DemoEc2InstanceRole 
+  DemoEc2InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: myfullaccessrole   
+
   DemoInstance:
     Type: 'AWS::EC2::Instance'
     Properties: 
@@ -96,18 +104,6 @@ Resources:
       Tags:
         - Key: Name
           Value: SSH-SG
-
-  DemoInstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties: 
-      InstanceProfileName: demo-ec2-instance-profile
-      Path: /
-      Roles: 
-       - !Ref DemoEc2InstanceRole 
-  DemoEc2InstanceRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: myfullaccessrole 
 
 Outputs:
   DemoInstanceId:
