@@ -1,8 +1,8 @@
 name: 'Deploy to AWS CloudFormation'
 
-on: 
-  push:
-    branches: [ master ]
+# on: 
+#  push:
+#    branches: [ master ]
  # pull_request:
  #   branches: [ master ]
 
@@ -14,6 +14,10 @@ on:
  #       required: true
  #       default: 'ap-south-1'
 
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   # This workflow contains a single job called "deploy"
@@ -38,7 +42,7 @@ jobs:
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: tekloon-test-stack
+          name: test-stack
           template: test-stack.yaml
           no-fail-on-empty-changeset: "1"
           # parameter-overrides: "EC2InstanceType=t2.micro"
