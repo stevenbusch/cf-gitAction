@@ -28,6 +28,12 @@ Parameters:
     Type: AWS::EC2::KeyPair::KeyName
     Default: MyEC2Instance
 
+inputs:
+  capabilities:
+    description: "capabilities to acknowledge. Defaults to 'CAPABILITY_IAM'"
+    required: true
+    default: "CAPABILITY_NAMED_IAM"
+
 Resources:
   DemoInstance:
     Type: 'AWS::EC2::Instance'
@@ -39,7 +45,7 @@ Resources:
       SecurityGroupIds: 
         - !Ref DemoSecurityGroup
       SubnetId: !Ref SubnetId
-      IamInstanceProfile: !Ref DemoInstanceProfile   
+      IamInstanceProfile: !Ref DemoInstanceProfile
       UserData:
         Fn::Base64: 
           !Sub |
@@ -98,6 +104,7 @@ Resources:
       Path: /
       Roles: 
        - !Ref DemoEc2InstanceRole
+      required:  
   DemoEc2InstanceRole:
     Type: AWS::IAM::Role
     Properties:
