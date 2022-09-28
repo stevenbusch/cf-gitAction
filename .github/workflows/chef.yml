@@ -49,21 +49,19 @@ jobs:
         aws-region: ${{ secrets.REGION }}  
       env:
         CHEF_LICENSE: accept-no-persist
-    - name: install chef
-      uses: actionshub/chef-install@main
-      with:
-        aws-access-key-id: ${{ secrets.ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
-        aws-region: ${{ secrets.REGION }}      
-      env:
-        CHEF_LICENSE: accept-no-persist
-    - name: Run inspec test
-      run: |
-        inspec exec .\test2.rb
-        Enable-PSRemoting
-        net start winrm      
-      env:
-        CHEF_LICENSE: accept-no-persist
+   # - name: install chef
+   #   uses: actionshub/chef-install@main
+   #   with:
+   #     aws-access-key-id: ${{ secrets.ACCESS_KEY }}
+   #     aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
+   #     aws-region: ${{ secrets.REGION }}      
+   #   env:
+   #     CHEF_LICENSE: accept-no-persist
+   # - name: Run inspec test
+   #   run: |
+   #     inspec exec .\test2.rb 
+   #   env:
+   #     CHEF_LICENSE: accept-no-persist
     - name: Remote sample
       uses: dj-256/github-exec@v1
       with:
@@ -72,7 +70,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         command: |
-          chef --version
-          choco
-          ls
           whoami      
