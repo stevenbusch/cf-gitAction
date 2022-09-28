@@ -3,9 +3,9 @@ describe file('C:/Windows/explorer.exe') do
     it { should be_file }
   end
   
-  describe user('Administrator') do
-    it { should exist }
-  end
+ # describe user('Administrator') do
+ #  it { should exist }
+ # end
   
   ## package example
  # describe package('Choco') do
