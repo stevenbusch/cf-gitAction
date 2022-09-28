@@ -39,14 +39,10 @@ jobs:
 
   remote-chef:
    # needs: provision-ec2
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Check out code
       uses: actions/checkout@master
-      with:
-        aws-access-key-id: ${{ secrets.ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
-        aws-region: ${{ secrets.REGION }}  
       env:
         CHEF_LICENSE: accept-no-persist
    # - name: install chef
