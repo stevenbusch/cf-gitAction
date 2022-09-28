@@ -1,13 +1,13 @@
 name: 'chef Inspec'
 
-on:
+#on:
 #  push:
 #    branches: [ main ]
  # pull_request:
  #   branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+#  workflow_dispatch:
  #   inputs:
  #     region:
  #       description: 'AWS Region to deploy to'
@@ -18,52 +18,64 @@ on:
 #  push:
 #    branches:
 #      - main
-#on:
-#  workflow_run:
-#    workflows: ["CloudFormation"]
-#    branches: [main]
-#    types: 
-#      - completed
+on:
+  workflow_run:
+    workflows: ["CloudFormation"]
+    branches: [main]
+    types: 
+      - completed
 
 jobs:
-#  on-success:
-#    runs-on: ubuntu-latest
-#    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-#    steps:
-#      - run: echo 'The triggering workflow passed'
-#  on-failure:
-#    runs-on: ubuntu-latest
-#    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-#    steps:
-#      - run: echo 'The triggering workflow failed'      
+  on-success:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - run: echo 'The triggering workflow passed'
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - run: echo 'The triggering workflow failed'      
 
   remote-chef:
    # needs: provision-ec2
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Check out code
       uses: actions/checkout@master
       env:
         CHEF_LICENSE: accept-no-persist
-   # - name: install chef
-   #   uses: actionshub/chef-install@main
-   #   with:
-   #     aws-access-key-id: ${{ secrets.ACCESS_KEY }}
-   #     aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
-   #     aws-region: ${{ secrets.REGION }}      
-   #   env:
-   #     CHEF_LICENSE: accept-no-persist
+    - name: install chef
+      uses: actionshub/chef-install@main  
+      env:
+        CHEF_LICENSE: accept-no-persist
    # - name: Run inspec test
    #   run: |
    #     inspec exec .\test2.rb 
    #   env:
    #     CHEF_LICENSE: accept-no-persist
-    - name: Remote sample
-      uses: dj-256/github-exec@v1
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        host: ${{ secrets.HOST }}
-        port: ${{ secrets.PORT }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        command: |
-          whoami      
+        aws-access-key-id: ${{ secrets.ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
+        aws-region: ${{ secrets.REGION }}
+    - name: Install awscli 
+      run: |
+        python -m pip install --upgrade pip
+        pip install awscli
+    - name: Run inspec remotely
+      run: |
+        net start winrm
+        $ID=aws cloudformation list-stack-resources --stack-name mystack --query StackResourceSummaries[1].[PhysicalResourceId] --output text
+        $ID
+        $IP=aws --region ap-south-1 ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=$ID" --query 'Reservations[*].Instances[*].[PublicIpAddress]' --output text
+        $IP
+        $username = "Administrator"
+        $password = "Password#1"
+        $secureStringPwd = $password | ConvertTo-SecureString -AsPlainText -Force 
+        $creds = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secureStringPwd
+        inspec exec .\test2.rb -t winrm://Administrator@$IP --password $secureStringPwd
+      env:
+        CHEF_LICENSE: accept-no-persist
+        
