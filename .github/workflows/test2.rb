@@ -3,15 +3,15 @@ describe file('C:/Windows/explorer.exe') do
     it { should be_file }
   end
   
-  describe user('Administrator') do
-    it { should exist }
-  end
+ # describe user('Administrator') do
+ #  it { should exist }
+ # end
   
   ## package example
-  describe package('Choco') do
-    it { should be_installed }
+ # describe package('Choco') do
+ #   it { should be_installed }
  #   its('version') { should eq '2.32.0.2' }
-  end
+ # end
   
   describe windows_task('\Microsoft\Windows\AppID\PolicyConverter') do
     it { should exist }

@@ -1,13 +1,13 @@
 name: 'chef Inspec'
 
-# on: 
-#  push:
-#    branches: [ master ]
+on:
+  push:
+    branches: [ main ]
  # pull_request:
  #   branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
- # workflow_dispatch:
+  workflow_dispatch:
  #   inputs:
  #     region:
  #       description: 'AWS Region to deploy to'
@@ -18,24 +18,24 @@ name: 'chef Inspec'
 #  push:
 #    branches:
 #      - main
-on:
-  workflow_run:
-    workflows: ["CloudFormation"]
-    branches: [main]
-    types: 
-      - completed
+#on:
+#  workflow_run:
+#    workflows: ["CloudFormation"]
+#    branches: [main]
+#    types: 
+#      - completed
 
-jobs:
-  on-success:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    steps:
-      - run: echo 'The triggering workflow passed'
-  on-failure:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
-    steps:
-      - run: echo 'The triggering workflow failed'      
+#jobs:
+#  on-success:
+#    runs-on: ubuntu-latest
+#    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+#    steps:
+#      - run: echo 'The triggering workflow passed'
+#  on-failure:
+#    runs-on: ubuntu-latest
+#    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+#    steps:
+#      - run: echo 'The triggering workflow failed'      
 
   remote-chef:
    # needs: provision-ec2
@@ -58,6 +58,21 @@ jobs:
       env:
         CHEF_LICENSE: accept-no-persist
     - name: Run inspec test
-      run: inspec exec .\test2.rb      
+      run: |
+        inspec exec .\test2.rb
+        Enable-PSRemoting
+        net start winrm      
       env:
         CHEF_LICENSE: accept-no-persist
+    - name: Remote sample
+      uses: dj-256/github-exec@v1
+      with:
+        host: ${{ secrets.HOST }}
+        port: ${{ secrets.PORT }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        command: |
+          chef --version
+          choco
+          ls
+          whoami      
