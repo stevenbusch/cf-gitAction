@@ -75,7 +75,7 @@ jobs:
         $password = "Password#1"
         $secureStringPwd = $password | ConvertTo-SecureString -AsPlainText -Force 
         $creds = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secureStringPwd
-        inspec exec .\test2.rb -t winrm://Administrator@$IP --password $secureStringPwd
+        inspec exec .\test2.rb -t winrm://$username@$IP --password $password
       env:
         CHEF_LICENSE: accept-no-persist
         
