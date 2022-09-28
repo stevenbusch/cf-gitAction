@@ -1,0 +1,59 @@
+name: 'chef Inspec'
+
+# on: 
+#  push:
+#    branches: [ master ]
+ # pull_request:
+ #   branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+ # workflow_dispatch:
+ #   inputs:
+ #     region:
+ #       description: 'AWS Region to deploy to'
+ #       required: true
+ #       default: 'ap-south-1'
+
+#on:
+#  push:
+#    branches:
+#      - main
+on:
+  workflow_run:
+    workflows: ["CloudFormation"]
+    branches: [main]
+    types: 
+      - completed
+
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - run: echo 'The triggering workflow passed'
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - run: echo 'The triggering workflow failed'      
+
+  remote-chef:
+   # needs: provision-ec2
+    runs-on: windows-latest
+    steps:
+    - name: Check out code
+      uses: actions/checkout@master
+      env:
+        CHEF_LICENSE: accept-no-persist
+    - name: install chef
+      uses: actionshub/chef-install@main
+      with:
+        aws-access-key-id: ${{ secrets.ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
+        aws-region: ${{ secrets.REGION }}      
+      env:
+        CHEF_LICENSE: accept-no-persist
+    - name: Run inspec test
+      run: inspec exec .\test2.rb      
+      env:
+        CHEF_LICENSE: accept-no-persist

@@ -1,4 +1,4 @@
-name: 'Deploy to AWS CloudFormation'
+name: 'CloudFormation'
 
 # on: 
 #  push:
@@ -45,28 +45,12 @@ jobs:
          # template: test-stack.yaml
          # no-fail-on-empty-changeset: "1"
          # parameter-overrides: "EC2InstanceType=t2.micro"
-      - name: Install awscli and run CF
+      - name: Install awscli 
         run: |
           python -m pip install --upgrade pip
           pip install awscli
-          sudo apt-get install cloud-utils
-      - run: |
-           aws cloudformation deploy --template-file test-stack.yaml --stack-name mystack --capabilities CAPABILITY_NAMED_IAM 
-           EC2_INSTANCE_ID=$(ec2metadata --instance-id)
-           EC2_PUBLIC_IP=$(ec2-metadata --public-ipv4)
-           echo $EC2_INSTANCE_ID
-           echo $EC2_PUBLIC_IP
-  
-  remote-chef:
-   # needs: provision-ec2
-    runs-on: windows-latest
-
-    steps:
-    - name: Check out code
-      uses: actions/checkout@master
-    - name: install chef
-      uses: actionshub/chef-install@main
-      env:
-        CHEF_LICENSE: accept-no-persist
-    - name: Run inspec test
-      run: inspec exec .\test2.rb
+         # apt update
+         # apt install cloud-utils
+      - name: Run CF
+        run: |
+          aws cloudformation deploy --template-file test-stack.yaml --stack-name mystack --capabilities CAPABILITY_NAMED_IAM
