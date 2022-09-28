@@ -8,8 +8,8 @@ describe file('C:/Windows/explorer.exe') do
   end
   
   ## package example
- # describe package('Git') do
- #   it { should be_installed }
+  describe package('Choco') do
+    it { should be_installed }
  #   its('version') { should eq '2.32.0.2' }
   end
   
