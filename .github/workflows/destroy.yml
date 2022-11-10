@@ -1,0 +1,27 @@
+name: 'Destroy on success or failure'
+
+on:
+  workflow_run:
+    workflows: ["Inspec test execution"]
+    branches: [main]
+    types: 
+      - completed
+
+jobs:
+  on-success:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Destroy on SUCCESS
+        run: |
+          echo 'Destroying EC2'
+          aws cloudformation delete-stack --stack-name mystack
+        
+  on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - name: Destroy on FAILURE
+        run: |
+          echo 'Destroying EC2'
+          aws cloudformation delete-stack --stack-name mystack
