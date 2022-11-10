@@ -37,20 +37,8 @@ jobs:
           aws-access-key-id: ${{ secrets.ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
           aws-region: ${{ secrets.REGION }}
-      # Deploy to AWS CloudFormation
-     # - name: Deploy to AWS CloudFormation
-       # uses: aws-actions/aws-cloudformation-github-deploy@v1
-       # with:
-         # name: test-stack
-         # template: test-stack.yaml
-         # no-fail-on-empty-changeset: "1"
-         # parameter-overrides: "EC2InstanceType=t2.micro"
-      - name: Install awscli 
-        run: |
-          python -m pip install --upgrade pip
-          pip install awscli
-         # apt update
-         # apt install cloud-utils
+        # aws-session-token: ${{ secrets.SESSION_TOKEN }} 
+
       - name: Run CF
         run: |
           aws cloudformation deploy --template-file test-stack.yaml --stack-name mystack --capabilities CAPABILITY_NAMED_IAM
