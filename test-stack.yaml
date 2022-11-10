@@ -40,7 +40,6 @@ Resources:
       SecurityGroupIds: 
         - !Ref DemoSecurityGroup
       SubnetId: !Ref SubnetId
-      IamInstanceProfile: !Ref DemoInstanceProfile
       UserData:
         Fn::Base64: 
           !Sub |
@@ -90,41 +89,6 @@ Resources:
       Tags:
         - Key: Name
           Value: New-SG
-
-  DemoInstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Properties: 
-      InstanceProfileName: newprofile
-      Path: /
-      Roles: 
-       - !Ref DemoEc2InstanceRole 
-
-  NewPolicy:
-    Type: 'AWS::IAM::Policy'
-    Properties:
-      PolicyName: newpolicyFullAccess
-      PolicyDocument:
-        Statement:
-          - Effect: Allow
-            Action: '*'
-            Resource: '*'
-      Roles:
-        - !Ref DemoEc2InstanceRole
-
-  DemoEc2InstanceRole:
-    Type: 'AWS::IAM::Role'
-    Properties:
-      RoleName: NewRole
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - ec2.amazonaws.com
-            Action:
-              - 'sts:AssumeRole'
-      Path: /  
 
 Outputs:
   DemoInstanceId:
