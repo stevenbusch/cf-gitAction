@@ -1,4 +1,4 @@
-name: 'chef Inspec'
+name: 'Inspec test execution'
 
 #on:
 #  push:
@@ -20,7 +20,7 @@ name: 'chef Inspec'
 #      - main
 on:
   workflow_run:
-    workflows: ["CloudFormation"]
+    workflows: ["EC2 Creation"]
     branches: [main]
     types: 
       - completed
@@ -41,11 +41,20 @@ jobs:
    # needs: provision-ec2
     runs-on: windows-latest
     steps:
+    
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
+        aws-region: ${{ secrets.REGION }}
+        
     - name: Check out code
       uses: actions/checkout@master
       env:
         CHEF_LICENSE: accept-no-persist
-    - name: install chef
+    
+    - name: Configure Inspec on runner
       uses: actionshub/chef-install@main  
       env:
         CHEF_LICENSE: accept-no-persist
@@ -54,16 +63,8 @@ jobs:
    #     inspec exec .\test2.rb 
    #   env:
    #     CHEF_LICENSE: accept-no-persist
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.ACCESS_KEY }}
-        aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
-        aws-region: ${{ secrets.REGION }}
-    - name: Install awscli 
-      run: |
-        python -m pip install --upgrade pip
-        pip install awscli
+
+
     - name: Run inspec remotely
       run: |
         net start winrm
