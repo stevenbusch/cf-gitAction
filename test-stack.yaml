@@ -40,6 +40,7 @@ Resources:
       SecurityGroupIds: 
         - !Ref DemoSecurityGroup
       SubnetId: !Ref SubnetId
+      IamInstanceProfile: !Ref DemoInstanceProfile
       UserData:
         Fn::Base64: 
           !Sub |
@@ -54,6 +55,9 @@ Resources:
             winrm set winrm/config/service '@{AllowUnencrypted="true"}'
             winrm set winrm/config/winrs '@{MaxMemoryPerShellMB="1024"}'
             Set-ExecutionPolicy AllSigned
+            Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')) 
+            choco upgrade chocolatey
+            choco install chef-workstation --force -Confirm:$false
             </powershell>
 
   DemoSecurityGroup:
@@ -89,6 +93,41 @@ Resources:
       Tags:
         - Key: Name
           Value: New-SG
+
+  DemoInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: newprofile
+      Path: /
+      Roles: 
+       - !Ref DemoEc2InstanceRole 
+
+  NewPolicy:
+    Type: 'AWS::IAM::Policy'
+    Properties:
+      PolicyName: newpolicyFullAccess
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Action: '*'
+            Resource: '*'
+      Roles:
+        - !Ref DemoEc2InstanceRole
+
+  DemoEc2InstanceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: NewRole
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /  
 
 Outputs:
   DemoInstanceId:
