@@ -1,4 +1,4 @@
-name: 'CloudFormation'
+name: 'EC2 Creation'
 
 # on: 
 #  push:
