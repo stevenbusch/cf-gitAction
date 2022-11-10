@@ -70,6 +70,7 @@ jobs:
         net start winrm
         $ID=aws cloudformation list-stack-resources --stack-name mystack --query StackResourceSummaries[1].[PhysicalResourceId] --output text
         $ID
+        sleep 60
         $IP=aws --region ap-south-1 ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=$ID" --query 'Reservations[*].Instances[*].[PublicIpAddress]' --output text
         $IP
         $username = "Administrator"
