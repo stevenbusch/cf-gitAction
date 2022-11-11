@@ -20,11 +20,9 @@ jobs:
   Inspec-tests:
    # needs: provision-ec2
     runs-on: windows-latest
-    steps:
-        
+    steps:      
     - name: Check out code
       uses: actions/checkout@master
-
     
     - name: Install Inspec on runner
       run: |
@@ -48,6 +46,7 @@ jobs:
         $IP
         $username = "Administrator"
         $password = "Password#1"
+        $env:Path += ';C:\opscode\inspec\bin\'
         $env:Path
         inspec --chef-license=accept
         inspec version
