@@ -51,6 +51,8 @@ jobs:
         # $creds = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secureStringPwd
         $env:PSModulePath -split ';'
         Get-ChildItem -Path Env:
+        $PSVersionTable
+        Invoke-Command { & "powershell.exe" } -NoNewScope
         where.exe inspec
         inspec --chef-license=accept
         inspec version
