@@ -38,4 +38,3 @@ jobs:
       - name: Creating EC2
         run: |
           aws ec2 run-instances --image-id ami-072b0ca48713abe5a --count 1 --instance-type t2.micro --key-name MyEC2Instance --security-group-ids sg-057943c0ab3e75683 --subnet-id subnet-08cc31842e79717d3 --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=New1}]" --user-data file://userdata.txt
-          $ID=aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=tag:Name,Values=New1" --query 'Reservations[*].Instances[*].[InstanceId]' --output text
