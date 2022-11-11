@@ -28,7 +28,7 @@ jobs:
                  
       - name: Destroy on SUCCESS
         run: |
-          ID="aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=New1' --output text --query 'Reservations[*].Instances[*].InstanceId'"
+          ID=`aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=New1' --output text --query 'Reservations[*].Instances[*].InstanceId'`
           echo "Destroying $ID"
           aws ec2 terminate-instances --instance-ids $ID    
         
@@ -48,6 +48,6 @@ jobs:
               
       - name: Destroy on FAILURE
         run: |
-          ID="aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=New1' --output text --query 'Reservations[*].Instances[*].InstanceId'"
+          ID=`aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=New1' --output text --query 'Reservations[*].Instances[*].InstanceId'`
           echo "Destroying $ID"
           aws ec2 terminate-instances --instance-ids $ID
