@@ -29,6 +29,7 @@ jobs:
     - name: Install Inspec on runner
       run: |
         . { iwr -useb https://omnitruck.chef.io/install.ps1 } | iex; install -project inspec
+        $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -52,6 +53,7 @@ jobs:
         $env:PSModulePath -split ';'
         Get-ChildItem -Path Env:
         $PSVersionTable
+        choco -v
         Invoke-Command { & "powershell.exe" } -NoNewScope
         where.exe inspec
         inspec --chef-license=accept
