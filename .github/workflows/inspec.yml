@@ -29,7 +29,6 @@ jobs:
     - name: Install Inspec on runner
       run: |
         . { iwr -useb https://omnitruck.chef.io/install.ps1 } | iex; install -project inspec
-        inspec --chef-license=accept
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -50,4 +49,6 @@ jobs:
         $password = "Password#1"
         # $secureStringPwd = $password | ConvertTo-SecureString -AsPlainText -Force 
         # $creds = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secureStringPwd
+        inspec --chef-license=accept
+        inspec version
         inspec exec .\test2.rb -t winrm://$username@$IP --password $password
