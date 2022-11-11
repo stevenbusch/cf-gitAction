@@ -50,6 +50,8 @@ jobs:
         # $secureStringPwd = $password | ConvertTo-SecureString -AsPlainText -Force 
         # $creds = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secureStringPwd
         $env:PSModulePath -split ';'
+        Get-ChildItem -Path Env:
+        where.exe inspec
         inspec --chef-license=accept
         inspec version
         inspec exec .\test2.rb -t winrm://$username@$IP --password $password
