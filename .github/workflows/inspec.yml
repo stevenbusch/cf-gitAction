@@ -42,8 +42,6 @@ jobs:
         $ID
         $IP=aws --region ap-south-1 ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=$ID" --query 'Reservations[*].Instances[*].[PublicIpAddress]' --output text
         $IP
-        $usrname = ${{ secrets.USERNAME }}
-        $passwrd = ${{ secrets.PASSWORD }}
         $env:Path += ';C:\opscode\inspec\bin\'
         inspec --chef-license=accept
-        inspec exec .\test2.rb -t winrm://$usrname@$IP --password $passwrd
+        inspec exec .\test2.rb -t winrm://${{ secrets.USERNAME }}@$IP --password ${{ secrets.PASSWORD }}
