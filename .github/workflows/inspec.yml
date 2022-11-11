@@ -27,7 +27,6 @@ jobs:
     - name: Install Inspec on runner
       run: |
         . { iwr -useb https://omnitruck.chef.io/install.ps1 } | iex; install -project inspec 
-        setx PATH "$env:path;C:\opscode\inspec\bin\" -m
         
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -38,6 +37,9 @@ jobs:
 
     - name: Run tests
       run: |
+        Enable-PSRemoting -Confirm:$false
+        winrm quickconfig
+        Set-ExecutionPolicy AllSigned
         net start winrm
         # $ID=aws cloudformation list-stack-resources --stack-name mystack --query StackResourceSummaries[1].[PhysicalResourceId] --output text
         $ID=aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=tag:Name,Values=New1" --query 'Reservations[*].Instances[*].[InstanceId]' --output text
@@ -47,8 +49,5 @@ jobs:
         $username = "Administrator"
         $password = "Password#1"
         $env:Path += ';C:\opscode\inspec\bin\'
-        $env:Path
         inspec --chef-license=accept
-        inspec version
-        inspec
         inspec exec .\test2.rb -t winrm://$username@$IP --password $password
