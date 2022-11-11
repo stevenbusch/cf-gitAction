@@ -68,14 +68,15 @@ jobs:
     - name: Run inspec remotely
       run: |
         net start winrm
-        $ID=aws cloudformation list-stack-resources --stack-name mystack --query StackResourceSummaries[1].[PhysicalResourceId] --output text
+        # $ID=aws cloudformation list-stack-resources --stack-name mystack --query StackResourceSummaries[1].[PhysicalResourceId] --output text
+        $ID=aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=tag:Name,Values=New1" --query 'Reservations[*].Instances[*].[InstanceId]' --output text
         $ID
         $IP=aws --region ap-south-1 ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=$ID" --query 'Reservations[*].Instances[*].[PublicIpAddress]' --output text
         $IP
         $username = "Administrator"
         $password = "Password#1"
-        $secureStringPwd = $password | ConvertTo-SecureString -AsPlainText -Force 
-        $creds = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secureStringPwd
+        # $secureStringPwd = $password | ConvertTo-SecureString -AsPlainText -Force 
+        # $creds = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $secureStringPwd
         inspec exec .\test2.rb -t winrm://$username@$IP --password $password
       env:
         CHEF_LICENSE: accept-no-persist
