@@ -12,7 +12,7 @@ on:
   
 jobs:
   on-success:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout code from master branch
@@ -25,14 +25,10 @@ jobs:
           aws-access-key-id: ${{ secrets.ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
           aws-region: ${{ secrets.REGION }}
-          
-      - name: Upgrade EC2
-        run: |
-          pip install --upgrade --user awscli
                  
       - name: Destroy on SUCCESS
         run: |
-          ID="aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=tag:Name,Values=New1" --query 'Reservations[*].Instances[*].[InstanceId]' --output text"
+          ID="aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=New1' --output text --query 'Reservations[*].Instances[*].InstanceId'"
           echo "Destroying $ID"
           aws ec2 terminate-instances --instance-ids $ID    
         
@@ -52,6 +48,6 @@ jobs:
               
       - name: Destroy on FAILURE
         run: |
-          ID="aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=tag:Name,Values=New1" --query 'Reservations[*].Instances[*].[InstanceId]' --output text"
+          ID="aws ec2 describe-instances --filters 'Name=instance-state-name,Values=running' 'Name=tag:Name,Values=New1' --output text --query 'Reservations[*].Instances[*].InstanceId'"
           echo "Destroying $ID"
           aws ec2 terminate-instances --instance-ids $ID
