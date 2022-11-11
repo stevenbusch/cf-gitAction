@@ -28,7 +28,8 @@ jobs:
     
     - name: Install Inspec on runner
       run: |
-        choco install inspec
+        . { iwr -useb https://omnitruck.chef.io/install.ps1 } | iex; install -project inspec 
+        setx PATH "$env:path;C:\opscode\inspec\bin\" -m
         
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -47,4 +48,7 @@ jobs:
         $IP
         $username = "Administrator"
         $password = "Password#1"
+        inspec --chef-license=accept
+        inspec version
+        inspec
         inspec exec .\test2.rb -t winrm://$username@$IP --password $password
