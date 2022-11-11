@@ -48,6 +48,7 @@ jobs:
         $IP
         $username = "Administrator"
         $password = "Password#1"
+        $env:Path
         inspec --chef-license=accept
         inspec version
         inspec
