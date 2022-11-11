@@ -18,7 +18,6 @@ jobs:
       - run: echo 'The triggering workflow failed'      
 
   Inspec-tests:
-   # needs: provision-ec2
     runs-on: windows-latest
     steps:      
     - name: Check out code
@@ -37,17 +36,14 @@ jobs:
 
     - name: Run tests
       run: |
-        Enable-PSRemoting -Confirm:$false
-        winrm quickconfig
-        Set-ExecutionPolicy AllSigned
+        sleep 10
         net start winrm
-        # $ID=aws cloudformation list-stack-resources --stack-name mystack --query StackResourceSummaries[1].[PhysicalResourceId] --output text
         $ID=aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=tag:Name,Values=New1" --query 'Reservations[*].Instances[*].[InstanceId]' --output text
         $ID
         $IP=aws --region ap-south-1 ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=$ID" --query 'Reservations[*].Instances[*].[PublicIpAddress]' --output text
         $IP
-        $username = "Administrator"
-        $password = "Password#1"
+        $usrname = ${{ secrets.USERNAME }}
+        $passwrd = ${{ secrets.PASSWORD }}
         $env:Path += ';C:\opscode\inspec\bin\'
         inspec --chef-license=accept
-        inspec exec .\test2.rb -t winrm://$username@$IP --password $password
+        inspec exec .\test2.rb -t winrm://$usrname@$IP --password $passwrd
