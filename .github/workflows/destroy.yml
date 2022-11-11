@@ -7,9 +7,6 @@ on:
     types: 
       - completed
 
-# env:
-  # InstID: aws ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=tag:Name,Values=New1" --query 'Reservations[*].Instances[*].[InstanceId]' --output text
-  
 jobs:
   on-success:
     runs-on: ubuntu-latest
